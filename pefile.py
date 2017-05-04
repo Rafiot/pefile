@@ -3755,7 +3755,7 @@ class PE(object):
 
             dll = self.get_string_at_rva(import_desc.szName, MAX_DLL_LENGTH)
             if not is_valid_dos_filename(dll):
-                dll = b('*invalid*')
+                dll = '*invalid*'
 
             if dll:
                 for symbol in import_data:
@@ -3866,7 +3866,7 @@ class PE(object):
 
             dll = self.get_string_at_rva(import_desc.Name, MAX_DLL_LENGTH)
             if not is_valid_dos_filename(dll):
-                dll = b('*invalid*')
+                dll = '*invalid*'
 
             if dll:
                 for symbol in import_data:
@@ -3986,7 +3986,7 @@ class PE(object):
                         imp_hint = self.get_word_from_data(data, 0)
                         imp_name = self.get_string_at_rva(table[idx].AddressOfData+2, MAX_IMPORT_NAME_LENGTH)
                         if not is_valid_function_name(imp_name):
-                            imp_name = b('*invalid*')
+                            imp_name = '*invalid*'
 
                         name_offset = self.get_offset_from_rva(table[idx].AddressOfData+2)
                     except PEFormatError as e:
@@ -4025,7 +4025,7 @@ class PE(object):
             # Some PEs appear to interleave valid and invalid imports. Instead of
             # aborting the parsing altogether we will simply skip the invalid entries.
             # Although if we see 1000 invalid entries and no legit ones, we abort.
-            if imp_name == b('*invalid*'):
+            if imp_name == '*invalid*':
                 if num_invalid > 1000 and num_invalid == idx:
                     raise PEFormatError('Too many invalid names, aborting parsing.')
                 num_invalid += 1
@@ -4568,7 +4568,7 @@ class PE(object):
             dump.add_line(u'%-10s   %-10s  %s' % ('Ordinal', 'RVA', 'Name'))
             for export in self.DIRECTORY_ENTRY_EXPORT.symbols:
                 if export.address is not None:
-                    name = b('None')
+                    name = 'None'
                     if export.name:
                         name = export.name
                     dump.add(u'%-10d 0x%08Xh    %s' % (export.ordinal, export.address, name))
