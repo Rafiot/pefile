@@ -1068,7 +1068,7 @@ class SectionStructure(Structure):
                 self.__dict__['Characteristics'] ^= SECTION_CHARACTERISTICS[name]
 
         elif name == 'Name':
-            val = val.rstrip(b'\x00').decode()
+            val = val.rstrip(b'\x00').decode('utf-8', 'backslashreplace')
 
         self.__dict__[name] = val
 
@@ -2276,11 +2276,15 @@ class PE(object):
                                 # Each value in the dictionary is a tuple:
                                 #  (key length, value length)
                                 # The lengths are in characters, not in bytes.
+                                if isinstance(key, bytes):
+                                    key = key.decode()
+                                if isinstance(entry, bytes):
+                                    entry = entry.decode()
                                 offsets = st_entry.entries_offsets[key]
                                 lengths = st_entry.entries_lengths[key]
 
                                 if len( entry ) > lengths[1]:
-                                    l = entry.decode('utf-8').encode('utf-16le')
+                                    l = entry.encode('utf-16le')
                                     file_data[offsets[1]:offsets[1]+lengths[1]*2 ] = l[:lengths[1]*2]
                                 else:
                                     encoded_data = entry.encode('utf-16le')
@@ -4570,7 +4574,7 @@ class PE(object):
                     dump.add(u'%-10d 0x%08Xh    %s' % (export.ordinal, export.address, name))
                     if export.forwarder:
                         dump.add_line(u' forwarder: {0}'.format(
-                            export.forwarder.decode(encoding)))
+                            export.forwarder))
                     else:
                         dump.add_newline()
 
