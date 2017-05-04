@@ -13,9 +13,12 @@ python:
     - '3.6-dev'
 
 install:
-    - pip install -U pip pytest-cov coverage codecov pytest
-    - pip install .
+    - pip install -U pip pytest-cov codecov
+    - pip install -I -e .
     - git clone git://github.com/viper-framework/pefile-tests.git
 
 script:
-    - pytest --cov=./ -vv pefile-tests/tests
+    - pytest --cov=./ -vv
+
+after_success:
+    - codecov
