@@ -648,18 +648,24 @@ def power_of_two(val):
 # These come from the great article[1] which contains great insights on
 # working with unicode in both Python 2 and 3.
 # [1]: http://python3porting.com/problems.html
+if sys.version_info < (3, 5):
+
+    def backslashreplace(ex):
+        # The error handler receives the UnicodeDecodeError, which contains arguments of the
+        # string and start/end indexes of the bad portion.
+        bstr, start, end = ex.args[1:4]
+
+        # The return value is a tuple of Unicode string and the index to continue conversion.
+        # Note: iterating byte strings returns int on 3.x but str on 2.x
+        return u''.join('\\x{:02x}'.format(c if isinstance(c, int) else ord(c))
+                        for c in bstr[start:end]), end
+
+    codecs.register_error('backslashreplace', backslashreplace)
+
 if not PY3:
-    def handler(err):
-        start = err.start
-        end = err.end
-        return (u"".join([u"\\x{0:02x}".format(ord(err.object[i])) for i in range(start,end)]),end)
-    import codecs
-    codecs.register_error('backslashreplace_', handler)
     def b(x):
         return x
 else:
-    import codecs
-    codecs.register_error('backslashreplace_', codecs.lookup_error('backslashreplace'))
     def b(x):
         if isinstance(x, (bytes, bytearray)):
             return bytes(x)
